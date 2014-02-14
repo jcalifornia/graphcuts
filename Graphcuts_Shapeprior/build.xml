@@ -1,0 +1,43 @@
+<project name="Graphcuts_Shapeprior" default="" basedir=".">
+    <description>
+    	Brennan_Lab build file
+    </description>
+  <property name="src" location="src" />
+  <property name="build" location="bin" />
+  <property name="dist"  location="dist" />
+ 
+	 <property name="pluginsDir"  location="$basedir/../../IJ/plugins/" />
+	<property name ="pluginsFiji" location="$basedir/../../fiji/plugins/" />
+ 
+  <property name="user.name" value="Josh Chang" />
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}"/>
+  </target>
+
+  
+  <target name="main" depends="compress" description="Main target">
+	<echo>
+		Building the .jar file.
+	</echo>
+</target>
+ <target name="compress" depends="" description="generate the distribution">
+ 	<jar jarfile="Graphcuts_Shapeprior.jar">
+ 		<fileset dir="." includes="plugins.config" />
+		<fileset dir="bin" includes="**/*.*" />
+ 		<manifest>
+ 		 	 	      <attribute name="Built-By" value="${user.name}"/>
+ 		</manifest>
+ 	</jar>
+    <copy file="Graphcuts_Shapeprior.jar" toDir="${pluginsDir}" />
+ 	<copy file="Graphcuts_Shapeprior.jar" toDir="${pluginsFiji}" />
+  </target>
+</project>
