@@ -1,7 +1,7 @@
 Graph cuts segmentation with kernel density shape prior
 =======================================================
 
-Graph cuts segmentation with kernel shape priors (ImageJ/FIJI plugin)
+Graph cuts segmentation with kernel shape priors ([ImageJ](http://imagej.nih.gov/ij/)/[Fiji](http://fiji.sc/Fiji) plugin)
 
 This method is based on the method in the paper
 
