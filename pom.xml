@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>net.imagej</groupId>
+		<artifactId>pom-imagej</artifactId>
+		<version>7.0.0</version>
+		<relativePath />
+	</parent>
+
+	<groupId>ucla.chou</groupId>
+	<artifactId>GraphcutsShapeprior_Plugin</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+
+	<name>plugins/GraphcutsShapeprior_Plugin.jar</name>
+	<description>Maven project for the Graph cuts segmentation with shape prior plugin</description>
+
+	<developers>
+		<developer>
+			<id>dscho</id>
+			<name>Josh Chang</name>
+			<email>joshchang@ucla.edu</email>
+			<url>iamjoshchang.com</url>
+			<organization>NIH</organization>
+			<organizationUrl>http://nih.gov</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/joshchang/graphcuts</connection>
+		<developerConnection>scm:git:git@github.com:joshchang/graphcuts</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/joshchang/graphcuts</url>
+	</scm>
+
+	<properties>
+		<main-class>GraphcutsShapeprior_Plugin</main-class>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
+
+        <dependency>
+            <groupId>sc.fiji</groupId>
+            <artifactId>fiji-lib</artifactId>
+            <version>2.1.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ujmp</groupId>
+            <artifactId>ujmp-complete</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>${main-class}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

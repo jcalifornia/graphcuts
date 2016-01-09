@@ -1,13 +1,13 @@
 package ucla.chou.graphcutshapes;
 
+import ij.IJ;
+import ij.ImageStack;
+import ij.process.ImageProcessor;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import ij.IJ;
-import ij.ImageStack;
-import ij.process.ImageProcessor;
 
 public class LaplaceMixture implements IntensityModel {
 
@@ -96,7 +96,7 @@ public class LaplaceMixture implements IntensityModel {
     }
 
     public double logpIn(double value) {
-	return -(Math.log(getPosteriorPrecision(true) / 2) - getPosteriorPrecision(true)
+	return (Math.log(getPosteriorPrecision(true) / 2) - getPosteriorPrecision(true)
 		* Math.abs(value - getPosteriorMean(true)));
     }
 
@@ -105,7 +105,7 @@ public class LaplaceMixture implements IntensityModel {
     }
 
     public double logpOut(double value) {
-	return -(Math.log(getPosteriorPrecision(false) / 2) - getPosteriorPrecision(false)
+	return (Math.log(getPosteriorPrecision(false) / 2) - getPosteriorPrecision(false)
 		* Math.abs(value - getPosteriorMean(false)));
     }
 

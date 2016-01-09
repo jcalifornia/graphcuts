@@ -20,6 +20,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: sc.fiji:fiji-lib:2.1.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: net.imagej:ij1-patcher:0.12.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.javassist:javassist:3.19.0-GA" level="project" />
     <orderEntry type="library" name="Maven: org.ujmp:ujmp-complete:0.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.ujmp:ujmp-core:0.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20141113" level="project" />
