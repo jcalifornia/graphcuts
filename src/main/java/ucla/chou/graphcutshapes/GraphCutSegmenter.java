@@ -108,13 +108,16 @@ public class GraphCutSegmenter {
 
 	public ImagePlus returnMaskedImage() {
 
-		return (new ImagePlus("", returnMaskProcessor()));
+		return new ImagePlus("", returnMaskProcessor());
 	}
 
 	public void setLengthPenalty(float MU) {
 		this.lengthPenalty = MU;
 	}
 
+	public void setEdgeWeights(){
+		setEdgeWeights(this.lengthPenalty);
+	}
 	/**
 	 * Set edge priorWeights with no prior information other than length penalty
 	 * could just set a pointer maybe

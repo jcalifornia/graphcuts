@@ -10,6 +10,7 @@ public class ShapePrior {
 	double multiplier = 1.0;
 	public double[] priorWeights = null;
 	public double inertialScale; // the universal inertialScale for the prior
+	final boolean testLinear = false;
 
 	public ShapePrior(ArrayList<ImplicitShape2D> shapes) {
 		this(shapes, null);
@@ -33,6 +34,40 @@ public class ShapePrior {
 		this.inertialScale = shapes.get(0).inertialScale;
 		IJ.log("Shape prior precision " + this.beta);
 
+	}
+	/**
+	 * Go in and rescale the shapes! What we do here is align the incoming shape
+	 * to the shape templates, and not the templates to the new shape. Should be
+	 * more stable. Reuse parameters
+	 *
+	 * @param shape
+	 */
+	public void setReferenceFrame(ImplicitShape2D shape) {
+		int i = 0;
+		double alpha = 1;
+		double[] c = new double[2];
+		double omega = 0;
+
+		for (ImplicitShape2D s : shapes) {
+			double[] transParams2 = new double[4];
+			if (i == 0) {
+				transParams2 = s.alignByNewton(shape);
+				alpha = transParams2[0];
+				c[0] = transParams2[1];
+				c[1] = transParams2[2];
+				omega = transParams2[3];
+
+			} else {
+				if(testLinear){
+					transParams2 = new double[]{alpha,c[0],c[1],omega};
+				}else
+					transParams2 = s.alignByNewton(shape, alpha, c, omega);
+			}
+			s.affineTransform2(transParams2[0], new double[] { transParams2[1],
+							transParams2[2] }, transParams2[3], shape.width,
+					shape.height);
+			i++;
+		}
 	}
 
 	public void setMultiplier(double value) {
