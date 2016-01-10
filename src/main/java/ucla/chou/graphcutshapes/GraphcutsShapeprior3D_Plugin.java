@@ -1,60 +1,24 @@
 package ucla.chou.graphcutshapes;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Panel;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import ucla.chou.graphcutshapes.util.ImageOverlay;
-
-import java.io.File;
-
 import fiji.util.gui.OverlayedImageCanvas;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
-import ij.gui.ImageWindow;
 import ij.gui.Roi;
 import ij.gui.StackWindow;
-import ij.io.Opener;
 import ij.plugin.PlugIn;
-import ij.process.AutoThresholder;
-import ij.process.ByteProcessor;
-import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
-import ij.process.ImageStatistics;
-import ij.process.LUT;
-import ij.process.StackStatistics;
+import ij.process.*;
+import ucla.chou.graphcutshapes.util.ImageOverlay;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GraphcutsShapeprior3D_Plugin implements PlugIn {
 
@@ -364,9 +328,9 @@ public class GraphcutsShapeprior3D_Plugin implements PlugIn {
 	graphSegmenter.setIntensityModel(likelihood);
 	graphSegmenter.setLengthPenalty(displayImage.getWidth()/28);
 	graphSegmenter.setNodeWeights(likelihood);
-	IJ.log("Done setting t-link weights");
+	IJ.log("Done setting t-link priorWeights");
 	graphSegmenter.setEdgeWeights();
-	IJ.log("Done setting n-link weights");
+	IJ.log("Done setting n-link priorWeights");
 	IJ.log("Finding the minimum cut...");
 	float minE = graphSegmenter.relaxEnergy();
 	IJ.log("Found a minimum cut of " + minE);
@@ -383,7 +347,7 @@ public class GraphcutsShapeprior3D_Plugin implements PlugIn {
 	    graphSegmenter.setIntensityModel(likelihood);
 	    IJ.log("Weighting the graph..");
 	    graphSegmenter.setLengthPenalty(displayImage.getWidth()/32);
-	    IJ.log("Setting node weights");
+	    IJ.log("Setting node priorWeights");
 	    graphSegmenter.setNodeWeights(likelihood);
 	    graphSegmenter.setEdgeWeights();
 
@@ -420,7 +384,7 @@ public class GraphcutsShapeprior3D_Plugin implements PlugIn {
 	likelihood.Infer(this.displayImage.getStack(), mask);
 
 	for (int r = 0; r < repetitions; r++) {
-	    // set the weights
+	    // set the priorWeights
 
 	    // segment, rinse, repeat
 	}

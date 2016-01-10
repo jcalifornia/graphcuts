@@ -6,8 +6,10 @@ import java.util.ArrayList;
 
 public class ShapePrior3D {
     public ArrayList<ImplicitShape3D> shapes;
-    double tauSquared;
-    public double[] weights;
+    double beta;
+    public double[] priorWeights;
+    double multiplier = 1.0;
+
     public double scale; // the universal inertialScale for the prior
     public double[] orientation; // the universal inertialOrientation for the prior
     public double[] center;
@@ -24,10 +26,10 @@ public class ShapePrior3D {
 	    weights = new double[N];
 	    for(int i = 0; i<N; i++) weights[i]=1.0/N;
 	}
-	else this.weights = weights;
+	else this.priorWeights = weights;
 	normalizeWeights();
 	IJ.log("Constructing the shape prior using "+shapes.size()+" shapes");
-	updateTauSquared();
+	updateBeta();
 	
     }
 
@@ -38,26 +40,28 @@ public class ShapePrior3D {
 	// we assume shape is already normalized
 	//shape.normalize();
 	this.shapes.add(shape);
-	updateTauSquared();
-    }
-    
-    
-    
-    public double getTauSquared(){
-	return this.tauSquared;
+	updateBeta();
     }
 
+
+    /*
+    \beta is defined in the JMIV paper
+    */
+    public double getBeta(boolean mult) {
+        //return 1;
+        return mult ? this.beta * this.multiplier : this.beta;
+    }
     public double computeDistance(ImplicitShape3D priorShape,
 	    ImplicitShape3D implicitShape3D) {
 	return priorShape.distance(implicitShape3D);
     }
     
-    public void updateTauSquared(){
+    public void updateBeta(){
 	// We assume that the shapes are already normalized and set to the correct inertialScale/inertialOrientation!
 	/**
          * Go through shapes, calculate distances
          */
-	IJ.log("Updating tau^2");
+	IJ.log("Updating \\beta");
         double minDistances[] = new double[this.shapes.size()];
         double tempDistance;
         double sigmaS = 0;
@@ -73,22 +77,22 @@ public class ShapePrior3D {
                         minDistances[j] = tempDistance;
                 }
             }
-            sigmaS += this.weights[j] * minDistances[j];
+            sigmaS += this.priorWeights[j] * minDistances[j];
             IJ.log(""+sigmaS);
         }
 
-        this.tauSquared = 1/sigmaS;
+        this.beta = 1/sigmaS;
 	
     }
 
     
     public void normalizeWeights(){
 	double sum=0;
-	for(int i =0;i<weights.length;i++){
-	    sum+=weights[i];
+	for(int i = 0; i< priorWeights.length; i++){
+	    sum+= priorWeights[i];
 	}
-	for(int i=0;i<weights.length;i++){
-	    weights[i]/=sum;
+	for(int i = 0; i< priorWeights.length; i++){
+	    priorWeights[i]/=sum;
 	}
     }
 

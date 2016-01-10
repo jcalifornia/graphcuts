@@ -135,13 +135,13 @@ public class GraphCutSegmenter3D {
     }
 
     /**
-     * Set edge weights with no prior information other than length penalty
+     * Set edge priorWeights with no prior information other than length penalty
      * could just set a pointer maybe
      */
     public void setEdgeWeights() {
 	for (int slice = 0; slice < depth; slice++) {
 	    // IJ.log("alive" + gc.getEdgeNum());
-	    IJ.showStatus("Setting n-link weights");
+	    IJ.showStatus("Setting n-link priorWeights");
 	    for (int y = 0; y < height - 1; y++) {
 		for (int x = 0; x < width - 1; x++) {
 		    gc.setEdgeWeight(slice * width * height + y * width + x,
@@ -193,7 +193,7 @@ public class GraphCutSegmenter3D {
     /**
      * The prior shape is a reference shape, or rather a prior guess at the true
      * segmentation that is used for determining weighting according to the MM
-     * algorithm. Setting these weights should be parallelizable
+     * algorithm. Setting these priorWeights should be parallelizable
      * 
      * @param skde
      *            Shape kernel density estimation
@@ -201,8 +201,8 @@ public class GraphCutSegmenter3D {
      *            The segmentation guess
      */
     public void setEdgeWeights(ShapePrior skde, ImplicitShape2D priorShape) {
-	// what I would like to do is reset the shape weights rather
-	// than recompute and reset edge weights
+	// what I would like to do is reset the shape priorWeights rather
+	// than recompute and reset edge priorWeights
 	gc.resetEdgeNum();
 	float weight;
 	/**
@@ -215,16 +215,16 @@ public class GraphCutSegmenter3D {
 	for (; j < skde.shapes.size(); j++) {
 	    kernelWeights[j] = Math
 		    .exp(-0.5
-			    * Math.log(2 * Math.PI / skde.getTauSquared(true))
+			    * Math.log(2 * Math.PI / skde.getBeta(true))
 			    - 0.5
 			    * (skde.computeDistance(priorShape,
-				    skde.shapes.get(j)) * skde.getTauSquared(true)))
-		    * skde.weights[j];
+				    skde.shapes.get(j)) * skde.getBeta(true)))
+		    * skde.priorWeights[j];
 
 	}
 	kernelWeights = normalize(kernelWeights);
 	ImplicitShape2D currentshape;
-	// weights are length penalty + shape penalty
+	// priorWeights are length penalty + shape penalty
 	float[] weights = new float[] { 0, 0, 0, 0 };
 
 	for (int y = 0; y < height - 1; y++) {
@@ -242,7 +242,7 @@ public class GraphCutSegmenter3D {
 				    Math.abs(0.5 * currentshape.get(x, y) + 0.5
 					    * currentshape.get(x + 1, y)),
 				    skde.shapes.get(0).lambda)
-			    * skde.getTauSquared(true);
+			    * skde.getBeta(true);
 		    weights[1] += 0.5
 			    * kernelWeights[j]
 			    * Math.pow(
@@ -254,7 +254,7 @@ public class GraphCutSegmenter3D {
 						    * currentshape
 							    .get(x, y + 1)),
 				    skde.shapes.get(0).lambda)
-			    * skde.getTauSquared(true);
+			    * skde.getBeta(true);
 		    weights[2] += kernelWeights[j]
 			    * Math.pow(
 				    Math.abs(0.5 * currentshape.get(x, y) + 0.5
@@ -265,7 +265,7 @@ public class GraphCutSegmenter3D {
 						    * currentshape
 							    .get(x, y + 1)),
 				    skde.shapes.get(0).lambda)
-			    * skde.getTauSquared(true) / Math.sqrt(2);
+			    * skde.getBeta(true) / Math.sqrt(2);
 		    weights[3] += kernelWeights[j]
 			    * Math.pow(
 				    Math.abs(0.5 * currentshape.get(x + 1, y)
@@ -276,7 +276,7 @@ public class GraphCutSegmenter3D {
 						    * currentshape
 							    .get(x, y + 1)),
 				    skde.shapes.get(0).lambda)
-			    * skde.getTauSquared(true) / Math.sqrt(2);
+			    * skde.getBeta(true) / Math.sqrt(2);
 		}
 		gc.setEdgeWeight(y * width + x, y * width + x + 1, weights[0]);
 		gc.setEdgeWeight(y * width + x, (y + 1) * width + x, weights[1]);
@@ -299,7 +299,7 @@ public class GraphCutSegmenter3D {
 					* skde.shapes.get(j).get(width - 1,
 						y + 1)),
 				skde.shapes.get(0).lambda)
-			* skde.getTauSquared(true);
+			* skde.getBeta(true);
 
 	    }
 	    gc.setEdgeWeight(y * width + width - 1,
@@ -318,7 +318,7 @@ public class GraphCutSegmenter3D {
 					* skde.shapes.get(j).get(x + 1,
 						height - 1)),
 				skde.shapes.get(0).lambda)
-			* skde.getTauSquared(true);
+			* skde.getBeta(true);
 
 	    }
 	    gc.setEdgeWeight((height - 1) * width + x, (height - 1) * width + x
@@ -327,11 +327,11 @@ public class GraphCutSegmenter3D {
     }
 
     /**
-     * Set the graph cut weights
+     * Set the graph cut priorWeights
      * 
-     * @param prior
+     * @param priorShape
      *            The prior probability of being in foreground
-     * @param intensityModel
+     * @param s
      *            The image statistics
      * @param skde 
      *            Shape kernel density estimate
@@ -343,15 +343,15 @@ public class GraphCutSegmenter3D {
 	double[] kernelWeights = new double[skde.shapes.size()];
 
 	/**
-	 * Compute weights
+	 * Compute priorWeights
 	 */
 	for (int j = 0; j < skde.shapes.size(); j++) {
-	    kernelWeights[j] = skde.weights[j]
+	    kernelWeights[j] = skde.priorWeights[j]
 		    * Math.exp(-0.5
-			    * Math.log(2 * Math.PI / skde.getTauSquared())
+			    * Math.log(2 * Math.PI / skde.getBeta(true))
 			    - 0.5
 			    * (skde.computeDistance(priorShape,
-				    skde.shapes.get(j)) * skde.getTauSquared()));
+				    skde.shapes.get(j)) * skde.getBeta(true)));
 
 	    if (Double.isNaN(kernelWeights[j])) {
 		kernelWeights[j] = 0;
@@ -364,7 +364,7 @@ public class GraphCutSegmenter3D {
 
 	/**
 	 * 
-	 * Add shape edge weights
+	 * Add shape edge priorWeights
 	 * 
 	 * 
 	 * 
@@ -377,7 +377,7 @@ public class GraphCutSegmenter3D {
 		    sink = 0;
 
 		    if (Double.isNaN(source) || Double.isNaN(sink))
-			IJ.log("Kernel object tau^2: " + skde.getTauSquared());
+			IJ.log("Kernel object tau^2: " + skde.getBeta(true));
 
 		    for (int j = 0; j < skde.shapes.size(); j++) {
 			if (skde.shapes.get(j).get(x, y, slice) < 0.0) {
@@ -386,14 +386,14 @@ public class GraphCutSegmenter3D {
 					    Math.abs(skde.shapes.get(j).get(x,
 						    y, slice)),
 					    skde.shapes.get(0).lambda) / 2
-				    * skde.getTauSquared();
+				    * skde.getBeta(true);
 			} else
 			    sink += weights[j]
 				    * Math.pow(
 					    Math.abs(skde.shapes.get(j).get(x,
 						    y, slice)),
 					    skde.shapes.get(0).lambda) / 2
-				    * skde.getTauSquared();
+				    * skde.getBeta(true);
 		    }
 
 		    // Near image edges, adjust
@@ -407,7 +407,7 @@ public class GraphCutSegmenter3D {
 					    Math.abs(skde.shapes.get(j).get(x,
 						    y, slice) + 0.5),
 					    skde.shapes.get(0).lambda) / 2
-				    * skde.getTauSquared();
+				    * skde.getBeta(true);
 
 			}
 		    }
@@ -433,7 +433,7 @@ public class GraphCutSegmenter3D {
     }
 
     /**
-     * Chan - Vese node weights
+     * Chan - Vese node priorWeights
      */
     public void setNodeWeights(IntensityModel likelihood) {
 
