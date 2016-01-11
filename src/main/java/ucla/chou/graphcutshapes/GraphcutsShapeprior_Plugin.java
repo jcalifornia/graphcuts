@@ -33,7 +33,6 @@ public class GraphcutsShapeprior_Plugin implements PlugIn {
     private Vector<Roi> segmentations = new Vector<Roi>();
 
     final double betaMultiplier = 0.5;
-    final double lambda = 2;
     final double alignmentlambda = 2;
 
     /*
