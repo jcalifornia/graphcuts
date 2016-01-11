@@ -15,40 +15,14 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.List;
-import java.awt.Panel;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import ucla.chou.graphcutshapes.util.ImageOverlay;
 
 public class GraphcutsShapeprior_Plugin implements PlugIn {
 
@@ -76,11 +50,7 @@ public class GraphcutsShapeprior_Plugin implements PlugIn {
      * Image objects
      */
 
-    // ImagePlus imageToSegment;
-    ImagePlus trainingTemplates;
-
     ImagePlus displayImage;
-    int slice = 1;
 
     int numTemplates = 0;
 
@@ -94,22 +64,10 @@ public class GraphcutsShapeprior_Plugin implements PlugIn {
     JButton optionsButton;
 
     JButton deleteShapeButton;
-
-    /** available colors for available classes */
-    final Color[] colors = new Color[] { Color.red, Color.green, Color.blue,
-	    Color.cyan, Color.magenta };
-
-    /** array of roi list overlays to paint the transparent rois of each class */
-    RoiListOverlay[] roiOverlay;
-
     private java.awt.List templateList; // training templates
     private java.awt.List segmentationList; // segmentations
 
-    /** array of buttons for adding each trace class */
-    private JButton[] addTemplateButton;
-
     final ExecutorService exec = Executors.newFixedThreadPool(1);
-    ImageOverlay resultOverlay;
 
     private boolean imageLoaded = false;
 
